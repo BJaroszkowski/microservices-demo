@@ -7,15 +7,15 @@ services:
     container_name: postgres
     user: postgres
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_PASSWORD: xyz
       POSTGRES_USER: alice
       POSTGRES_DB: calculation
-      PGPASSWORD: xyz
     command: ["postgres"]
     volumes:
       - api_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
   api:
     image: api
     restart: always
@@ -27,8 +27,8 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE: "postgresql://alice:xyz@localhost:5432/calculation"
-      CALCULATOR_URL: "http://localhost:8002"
+      DATABASE: "postgresql://alice:xyz@postgres:5432/calculation"
+      CALCULATOR_URL: "http://calculator:8000"
 
   calculator:
     image: calculator

@@ -2,9 +2,9 @@ from pydantic import BaseModel
 
 
 class Result(BaseModel):
-    data_point: str
-    timestamp: int
-    value: float
+    name: str
+    t: int
+    v: float
 
 
 class Statistics(BaseModel):

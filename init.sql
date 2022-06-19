@@ -1,0 +1,6 @@
+CREATE TABLE results (
+	id serial PRIMARY KEY,
+	data_point VARCHAR(255) NOT NULL,
+	timestamp BIGINT NOT NULL,
+	value DOUBLE PRECISION NOT NULL
+);

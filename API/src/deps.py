@@ -34,10 +34,12 @@ def get_db() -> Iterator[Session]:
 
 class CalculationClient:
     def __init__(self, api_url: str) -> None:
-        self.api_url = api_url
+        self.api_url = api_url + "/api/"
 
+    # TODO: limit retries to connection errors
     @retry(tries=5, backoff=2)
-    def _get(url: str, data: dict[str, Any] | None):
+    def _get(self, url: str, data: dict[str, Any] | None):
+        print(url)
         resp = requests.get(url, json=data)
         resp.raise_for_status()
         return resp.json()

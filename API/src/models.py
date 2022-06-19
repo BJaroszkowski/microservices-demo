@@ -6,7 +6,7 @@ Base = declarative_base()
 
 
 class Result(Base):
-    __tablename__ = "result"
+    __tablename__ = "results"
 
     id = Column(Integer, primary_key=True)
     data_point = Column(String(255), nullable=False)

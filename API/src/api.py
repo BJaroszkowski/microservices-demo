@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from schemas import Result, Statistics
@@ -14,7 +14,8 @@ router = APIRouter()
 async def post_result(results: list[Result], db: Session = Depends(get_db)):
 
     for result in results:
-        db.add(result)
+        dbresult = DBResult(data_point=result.name, timestamp=result.t, value=result.v)
+        db.add(dbresult)
     db.commit()
 
 
@@ -34,11 +35,17 @@ async def query_results(
     query = db.query(DBResult).filter(DBResult.data_point == data_point)
 
     if _from is not None:
-        query.filter(DBResult.timestamp >= _from)
+        query = query.filter(DBResult.timestamp >= _from)
 
     if to is not None:
-        query.filter(DBResult.timestamp <= to)
+        query = query.filter(DBResult.timestamp <= to)
 
     results = query.all()
+
+    if not results:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f"No valid results found for data point: {data_point}",
+        )
 
     return calculation_client.get_statistics(results)
