@@ -10,6 +10,7 @@ from models import Result as DBResult
 router = APIRouter()
 
 
+# TODO: create db interface to be able to use non-relational databases as well
 @router.post("/", status_code=HTTPStatus.CREATED)
 async def post_result(results: list[Result], db: Session = Depends(get_db)):
 
