@@ -1,4 +1,5 @@
-All docker containers can be started using `start.sh` script. Moreover, for
+All docker containers can be started using `start.sh` script. Docker and
+docker-compose are required to run the demo. Moreover, for
 debugging purposes, they will expose their services on the localhost on the
 following ports:
 

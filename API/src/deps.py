@@ -1,13 +1,15 @@
 from typing import Any, Iterator
 
-from retry import retry
 import requests
+from config import Settings
 from pydantic import SecretStr
-from sqlalchemy.orm import Session, sessionmaker
+from retry import retry
+from schemas import Result, Statistics
 from sqlalchemy import create_engine
 
-from config import Settings
-from schemas import Result, Statistics
+# TODO: given the data structure at the moment, in a production environment it
+# would be probably a better idea to use non-relational db like MongoDB
+from sqlalchemy.orm import Session, sessionmaker
 
 settings = Settings()
 
@@ -23,7 +25,6 @@ engine = prepare_database(settings.database)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-# TODO: probably it is a better idea to use non-relational db like MongoDB
 def get_db() -> Iterator[Session]:
     db = SessionLocal()
     try:
@@ -36,10 +37,9 @@ class CalculationClient:
     def __init__(self, api_url: str) -> None:
         self.api_url = api_url + "/api/"
 
-    # TODO: limit retries to connection errors
+    # TODO: limit retries to connection errors and return error code when connection fails
     @retry(tries=5, backoff=2)
     def _get(self, url: str, data: dict[str, Any] | None):
-        print(url)
         resp = requests.get(url, json=data)
         resp.raise_for_status()
         return resp.json()
